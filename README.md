@@ -15,9 +15,16 @@ This is a template for creating Minecraft Bedrock Add-Ons using TypeScript, base
     You should also rename the folders in `behavior_packs` and `resource_packs` to match.
 
 3.  **Generate New UUIDs:**
-    Open the `manifest.json` files in your behavior and resource pack folders.
-    You need to replace all instances of `PLEASE_REPLACE_WITH_NEW_UUID_...` with new, unique UUIDs. You can generate UUIDs using an online tool like [uuidgenerator.net](https://www.uuidgenerator.net/).
-    **Important:** Make sure the UUIDs in the `dependencies` sections correctly reference the UUIDs in the `header` sections of the corresponding packs.
+    To automatically generate new UUIDs for your `manifest.json` files, first install the `uuid` package:
+    ```bash
+    npm install uuid
+    ```
+    Then, run the following command:
+    ```bash
+    npm run generate-uuid
+    ```
+    This command will automatically update the `header.uuid`, `modules[0].uuid`, and the interconnected `dependencies` UUIDs in both `behavior_packs/template_b/manifest.json` and `resource_packs/template_r/manifest.json`.
+    **Important:** Ensure that the `dependencies` UUIDs correctly reference the `header` UUIDs of the corresponding packs for proper inter-pack communication.
 
 4.  **Install Dependencies:**
     Open a terminal in your project directory and run:
