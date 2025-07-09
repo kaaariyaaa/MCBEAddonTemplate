@@ -48,3 +48,6 @@ This is a template for creating Minecraft Bedrock Add-Ons using TypeScript, base
 
 *   `npm run watch`
     Watches for changes in your source files (`.ts`, `.json`, etc.) and automatically rebuilds and packages the add-on.
+
+*   `npm run create-local-release "<commit message>"`
+    Commits current changes, increments the patch version in `package.json`, creates a new Git tag, builds the project, and generates a `.mcaddon` file. Replace `<commit message>` with your desired commit message.
