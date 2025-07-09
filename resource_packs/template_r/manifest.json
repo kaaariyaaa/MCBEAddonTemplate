@@ -1,0 +1,24 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "MCBEAddonTemplate Resource Pack",
+    "description": "Resource pack for the template add-on.",
+    "uuid": "PLEASE_REPLACE_WITH_NEW_UUID_3",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 20, 30]
+  },
+  "modules": [
+    {
+      "description": "Resources",
+      "type": "resources",
+      "uuid": "PLEASE_REPLACE_WITH_NEW_UUID_4",
+      "version": [1, 0, 0]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "PLEASE_REPLACE_WITH_NEW_UUID_1",
+      "version": [1, 0, 0]
+    }
+  ]
+}
