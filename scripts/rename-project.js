@@ -28,7 +28,13 @@ function updateEnvFile(filePath) {
     const absolutePath = path.join(process.cwd(), filePath);
     try {
         let content = fs.readFileSync(absolutePath, 'utf8');
+        
+        const newProjectNameFormatted = newProjectName.toLowerCase().replace(/\s/g, '_');
+        
         content = content.replace(`PROJECT_NAME=${currentProjectName}`, `PROJECT_NAME=${newProjectName}`);
+        content = content.replace(/BEHAVIOR_PACK_DIR_NAME=.*/, `BEHAVIOR_PACK_DIR_NAME=${newProjectNameFormatted}_b`);
+        content = content.replace(/RESOURCE_PACK_DIR_NAME=.*/, `RESOURCE_PACK_DIR_NAME=${newProjectNameFormatted}_r`);
+        
         fs.writeFileSync(absolutePath, content, 'utf8');
         console.log(`Updated ${filePath}`);
     } catch (error) {

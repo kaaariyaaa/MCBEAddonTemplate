@@ -58,16 +58,12 @@ Minecraft の公式 API (`@minecraft/server`, `@minecraft/server-ui` など) に
 ### 2. コミットメッセージ
 
 コミットメッセージは、変更内容が明確にわかるように、以下の形式で記述します。
+コミットメッセージは、日本語で記述します
 
 ```
 <type>(<scope>): <subject>
 
-<body>
-
-<footer>
-```
-
-- **type**: コミットの種類を表します。
+<body>pe**: コミットの種類を表します。
   - `feat`: 新機能の追加
   - `fix`: バグ修正
   - `docs`: ドキュメントの変更
