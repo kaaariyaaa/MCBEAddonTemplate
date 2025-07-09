@@ -5,7 +5,11 @@ This is a template for creating Minecraft Bedrock Add-Ons using TypeScript, base
 ## Getting Started
 
 1.  **Rename the Project:**
-    Rename the `MCBEAddonTemplate` directory to whatever you want to call your project.
+    To rename your project, you can use the `npm run rename-project` command, which updates internal project settings and sub-directory names.
+    ```bash
+    npm run rename-project <YourNewProjectName>
+    ```
+    After running this command, you will also need to **manually rename the project's root directory** (e.g., `MCBEAddonTemplate`) to your desired new project name. If you need assistance with this manual step, a shell script can be provided to help automate this process outside of this CLI.
 
 2.  **Update Project Name in `.env`:**
     Open the `.env` file and change the `PROJECT_NAME` to match your behavior and resource pack folder names. For example:
