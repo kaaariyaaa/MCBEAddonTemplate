@@ -10,10 +10,26 @@ if (!newProjectName) {
 
 const currentProjectName = 'MCBEAddonTemplate'; // Assuming this is the initial project name
 
+// Function to find the current behavior pack or resource pack directory name
+function findPackDirectory(basePath, suffix) {
+    const fullPath = path.join(process.cwd(), basePath);
+    if (!fs.existsSync(fullPath)) {
+        return null; // Base path does not exist
+    }
+    const directories = fs.readdirSync(fullPath, { withFileTypes: true })
+        .filter(dirent => dirent.isDirectory() && dirent.name.endsWith(suffix))
+        .map(dirent => dirent.name);
+    return directories.length > 0 ? directories[0] : null;
+}
+
 // Function to update JSON files
 function updateJsonFile(filePath, updateFn) {
     const absolutePath = path.join(process.cwd(), filePath);
     try {
+        if (!fs.existsSync(absolutePath)) {
+            console.warn(`Skipping update for ${filePath}: File not found.`);
+            return;
+        }
         const content = JSON.parse(fs.readFileSync(absolutePath, 'utf8'));
         updateFn(content);
         fs.writeFileSync(absolutePath, JSON.stringify(content, null, 2), 'utf8');
@@ -27,6 +43,10 @@ function updateJsonFile(filePath, updateFn) {
 function updateEnvFile(filePath) {
     const absolutePath = path.join(process.cwd(), filePath);
     try {
+        if (!fs.existsSync(absolutePath)) {
+            console.warn(`Skipping update for ${filePath}: File not found.`);
+            return;
+        }
         let content = fs.readFileSync(absolutePath, 'utf8');
         
         const newProjectNameFormatted = newProjectName.toLowerCase().replace(/\s/g, '_');
@@ -51,22 +71,47 @@ updateJsonFile('package.json', (content) => {
     content.productName = newProjectName;
 });
 
-// Update behavior_packs/template_b/manifest.json
-updateJsonFile('behavior_packs/template_b/manifest.json', (content) => {
+// Dynamically find current pack directory names
+const currentBpDir = findPackDirectory('behavior_packs', '_b') || 'template_b';
+const currentRpDir = findPackDirectory('resource_packs', '_r') || 'template_r';
+
+const newProjectNameFormatted = newProjectName.toLowerCase().replace(/\s/g, '_');
+const newBpDir = `${newProjectNameFormatted}_b`;
+const newRpDir = `${newProjectNameFormatted}_r`;
+
+// Update behavior_packs/currentBpDir/manifest.json
+updateJsonFile(`behavior_packs/${currentBpDir}/manifest.json`, (content) => {
     content.header.name = `${newProjectName} Behavior Pack`;
 });
 
-// Update resource_packs/template_r/manifest.json
-updateJsonFile('resource_packs/template_r/manifest.json', (content) => {
+// Update resource_packs/currentRpDir/manifest.json
+updateJsonFile(`resource_packs/${currentRpDir}/manifest.json`, (content) => {
     content.header.name = `${newProjectName} Resource Pack`;
 });
 
 // Rename directories
 try {
-    fs.renameSync(path.join(process.cwd(), 'behavior_packs/template_b'), path.join(process.cwd(), `behavior_packs/${newProjectName.toLowerCase().replace(/\s/g, '_')}_b`));
-    console.log(`Renamed behavior_packs/template_b to behavior_packs/${newProjectName.toLowerCase().replace(/\s/g, '_')}_b`);
-    fs.renameSync(path.join(process.cwd(), 'resource_packs/template_r'), path.join(process.cwd(), `resource_packs/${newProjectName.toLowerCase().replace(/\s/g, '_')}_r`));
-    console.log(`Renamed resource_packs/template_r to resource_packs/${newProjectName.toLowerCase().replace(/\s/g, '_')}_r`);
+    const oldBpPath = path.join(process.cwd(), 'behavior_packs', currentBpDir);
+    const newBpPath = path.join(process.cwd(), 'behavior_packs', newBpDir);
+    if (fs.existsSync(oldBpPath) && !fs.existsSync(newBpPath)) {
+        fs.renameSync(oldBpPath, newBpPath);
+        console.log(`Renamed ${oldBpPath} to ${newBpPath}`);
+    } else if (fs.existsSync(newBpPath)) {
+        console.log(`Skipping rename for behavior pack: ${newBpPath} already exists.`);
+    } else {
+        console.warn(`Skipping rename for behavior pack: ${oldBpPath} not found.`);
+    }
+
+    const oldRpPath = path.join(process.cwd(), 'resource_packs', currentRpDir);
+    const newRpPath = path.join(process.cwd(), 'resource_packs', newRpDir);
+    if (fs.existsSync(oldRpPath) && !fs.existsSync(newRpPath)) {
+        fs.renameSync(oldRpPath, newRpPath);
+        console.log(`Renamed ${oldRpPath} to ${newRpPath}`);
+    } else if (fs.existsSync(newRpPath)) {
+        console.log(`Skipping rename for resource pack: ${newRpPath} already exists.`);
+    } else {
+        console.warn(`Skipping rename for resource pack: ${oldRpPath} not found.`);
+    }
 } catch (error) {
     console.error('Error renaming directories:', error);
 }

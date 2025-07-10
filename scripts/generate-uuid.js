@@ -2,8 +2,15 @@ const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
-const behaviorPackManifestPath = 'behavior_packs/template_b/manifest.json';
-const resourcePackManifestPath = 'resource_packs/template_r/manifest.json';
+const projectName = process.argv[2]; // Get project name from command line argument
+
+if (!projectName) {
+    console.error('Error: Project name not provided. Usage: node generate-uuid.js <ProjectName>');
+    process.exit(1);
+}
+
+const behaviorPackManifestPath = `behavior_packs/${projectName}_b/manifest.json`;
+const resourcePackManifestPath = `resource_packs/${projectName}_r/manifest.json`;
 
 try {
     // Behavior Pack Manifest
@@ -62,4 +69,5 @@ try {
 
 } catch (error) {
     console.error(`Error updating manifest files:`, error);
+    process.exit(1);
 }

@@ -9,18 +9,18 @@ echo  Minecraft Bedrock Add-On Project Setup
 echo =======================================================
 echo.
 
-REM Prompt for the new project name
-set /p ProjectName="Please enter the new name for your project: "
-
-IF "%ProjectName%"=="" (
+REM Get the new project name from the command line argument
+IF "%~1"=="" (
     echo.
-    echo [ERROR] Project name cannot be empty. Setup aborted.
-    echo.
-    pause
-    exit /b
+    echo Please enter the new project name:
+    set /p ProjectName=
+) ELSE (
+    set "ProjectName=%~1"
 )
 
+echo Project name set to: %ProjectName%
 echo.
+
 echo [Step 1/4] Installing dependencies...
 call npm install
 IF %ERRORLEVEL% NEQ 0 (
@@ -42,7 +42,7 @@ echo [SUCCESS] Project internals renamed.
 echo.
 
 echo [Step 3/4] Generating new UUIDs for manifest files...
-call npm run generate-uuid
+call npm run generate-uuid %ProjectName%
 IF %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Failed to generate UUIDs.
     pause
@@ -67,7 +67,7 @@ REM Create a temporary batch file in the parent directory to perform the rename
     echo     echo [ERROR] Failed to rename the directory. It might be in use.
     echo     pause
     echo     exit /b
-    echo ) 
+    echo )
     echo echo [SUCCESS] Project directory has been renamed.
     echo echo.
     echo echo This temporary window will close in 3 seconds...
