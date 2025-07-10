@@ -73,6 +73,7 @@ Minecraft の公式 API (`@minecraft/server`, `@minecraft/server-ui` など) に
   - `chore`: ビルドプロセスや補助ツールの変更
 - **scope** (任意): 変更が影響する範囲を示します。（例: `commands`, `history`）
 - **subject**: 変更内容の簡潔な説明（50 文字以内）。
+```
 
 ### 3. Pull Request (PR)
 
