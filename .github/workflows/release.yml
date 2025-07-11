@@ -1,49 +1,88 @@
-name: Release
+name: Create Release
 
 on:
   push:
     branches:
-      - main
-    tags:
-      - 'v*' # Push events to branches matching v*, e.g., v1.0.0
+      - release
+
+permissions:
+  contents: write
 
 jobs:
   build-and-release:
-    runs-on: ubuntu-latest # GitHub Actions runs on Linux by default
-
+    runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # This is needed to push the new version tag back to the repository
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20' # Use a recent LTS version
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Build project
-      run: npm run build
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-    - name: Create .mcaddon
-      run: npm run mcaddon
+      - name: Bump version and create tag
+        id: tag_version
+        run: |
+          # Bump the patch version, create a commit, and a tag
+          npm version patch -m "chore(release): bump version to %s"
+          # Get the new version from package.json
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
-    - name: Get release version
-      id: get_version
-      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-      if: startsWith(github.ref, 'refs/tags/v')
+      - name: Push changes
+        run: git push origin release --follow-tags
 
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
-      if: startsWith(github.ref, 'refs/tags/v')
-      with:
-        tag_name: ${{ github.ref }}
-        name: Release ${{ steps.get_version.outputs.VERSION }}
-        body: |
-          # Release ${{ steps.get_version.outputs.VERSION }}
+      - name: Build project
+        run: npm run build
 
-          This release includes the latest changes and the compiled add-on.
-        files: dist/packages/*.mcaddon # Attach the .mcaddon file
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate declaration files
+        run: npx tsc --project tsconfig.json --declaration --emitDeclarationOnly --outDir dist/types
+
+      - name: Create .mcaddon file
+        id: create_mcaddon
+        run: |
+          npm run mcaddon
+          # Find the generated mcaddon file
+          MCADDON_FILE=$(find dist/packages -name "*.mcaddon")
+          echo "path=${MCADDON_FILE}" >> $GITHUB_OUTPUT
+
+      - name: Prepare release archive (JS and DTS)
+        id: prepare_archive
+        run: |
+          PACKAGE_NAME=$(node -p "require('./package.json').productName")
+          VERSION=${{ steps.tag_version.outputs.version }}
+          ARCHIVE_NAME="${PACKAGE_NAME}-v${VERSION}-bundle.zip"
+          mkdir -p release_package
+          cp dist/scripts/main.js release_package/
+          cp dist/scripts/main.js.map release_package/
+          cp -r dist/types/ release_package/types
+          zip -r "${ARCHIVE_NAME}" release_package
+          echo "archive_path=${ARCHIVE_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag_version.outputs.tag }}
+          name: Release v${{ steps.tag_version.outputs.version }}
+          body: |
+            # Release v${{ steps.tag_version.outputs.version }}
+
+            This release includes:
+            - The installable `.mcaddon` file.
+            - A `.zip` archive containing the bundled JavaScript and TypeScript declaration files for developers.
+          files: |
+            ${{ steps.create_mcaddon.outputs.path }}
+            ${{ steps.prepare_archive.outputs.archive_path }}
