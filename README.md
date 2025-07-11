@@ -46,21 +46,21 @@ To allow the build tools to correctly locate your Minecraft installation, config
 - **`MINECRAFT_PRODUCT`**: Set to `BedrockUWP` for the Windows 10/11 Edition.
 - **`CUSTOM_DEPLOYMENT_PATH`**: (Optional) Specify if you have a custom Minecraft installation path.
 
-### 4. Using `setup.bat` (Windows Only)
+### 4. Using `setup.js`
 
 This script can also be launched directly from File Explorer.
 
-The `setup.bat` script automates the initial setup steps (installing dependencies, renaming the project, generating UUIDs, and renaming the project directory itself). It is only available for Windows environments.
+The `setup.js` script automates the initial setup steps (installing dependencies, renaming the project, and generating UUIDs).
 
 To set up your project, run the following command in Command Prompt or PowerShell:
 
 ```bash
-setup.bat <YourNewProjectName>
+npm run setup <YourNewProjectName>
 ```
 
 Example:
 ```bash
-setup.bat MyAwesomeAddon
+npm run setup MyAwesomeAddon
 ```
 
 This will configure your project with the specified name and perform all necessary initializations.

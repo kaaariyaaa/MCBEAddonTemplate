@@ -44,21 +44,21 @@ npm install
 - **`MINECRAFT_PRODUCT`**: Windows 10/11 版の場合は `BedrockUWP` に設定します。
 - **`CUSTOM_DEPLOYMENT_PATH`**: (任意) Minecraft のカスタムインストールパスがある場合に指定します。
 
-### 4. `setup.bat` の利用 (Windows のみ)
+### 4. `setup.js` の利用
 
 このスクリプトは、ファイルエクスプローラーから直接起動して使用することも可能です。
 
-`setup.bat` スクリプトは、上記の初期設定ステップ（依存関係のインストール、プロジェクト名の変更、UUID の生成、およびプロジェクトディレクトリ自体のリネーム）を自動化します。Windows 環境でのみ利用可能です。
+`setup.js` スクリプトは、上記の初期設定ステップ（依存関係のインストール、プロジェクト名の変更、UUID の生成）を自動化します。
 
 プロジェクトをセットアップするには、コマンドプロンプトまたは PowerShell で以下のコマンドを実行します。
 
 ```bash
-setup.bat <新しいプロジェクト名>
+npm run setup <新しいプロジェクト名>
 ```
 
 例:
 ```bash
-setup.bat MyAwesomeAddon
+npm run setup MyAwesomeAddon
 ```
 
 これにより、プロジェクトが指定した名前に設定され、必要な初期化がすべて行われます。
