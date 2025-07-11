@@ -26,7 +26,8 @@
     "enablemcpreviewloopback": "CheckNetIsolation.exe LoopbackExempt -a -p=S-1-15-2-424268864-5579737-879501358-346833251-474568803-887069379-4040235476",
     "generate-uuid": "node scripts/generate-uuid.js",
     "rename-project": "node scripts/rename-project.js",
-    "create-local-release": "node scripts/create-local-release.js"
+    "create-local-release": "node scripts/create-local-release.js",
+    "setup": "node scripts/setup.js"
   },
   "dependencies": {
     "@minecraft/common": "^1.2.0",
