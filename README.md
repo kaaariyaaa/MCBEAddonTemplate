@@ -48,8 +48,6 @@ To allow the build tools to correctly locate your Minecraft installation, config
 
 ### 4. Using `setup.js`
 
-This script can also be launched directly from File Explorer.
-
 The `setup.js` script automates the initial setup steps (installing dependencies, renaming the project, and generating UUIDs).
 
 To set up your project, run the following command in Command Prompt or PowerShell:
