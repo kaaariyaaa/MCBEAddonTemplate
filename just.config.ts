@@ -1,8 +1,6 @@
 import { argv, parallel, series, task, tscTask } from "just-scripts";
 import {
-  BundleTaskParameters,
   CopyTaskParameters,
-  bundleTask,
   cleanTask,
   cleanCollateralTask,
   copyTask,
@@ -16,6 +14,7 @@ import {
   watchTask,
 } from "@minecraft/core-build-tasks";
 import path from "path";
+import { rolldown } from "rolldown";
 
 // Setup env variables
 setupEnvironment(path.resolve(__dirname, ".env"));
@@ -24,14 +23,16 @@ const projectName = getOrThrowFromProcess("PROJECT_NAME");
 // You can use `npm run build:production` to build a "production" build that strips out statements labelled with "dev:".
 const isProduction = argv()["production"];
 
-const bundleTaskOptions: BundleTaskParameters = {
-  entryPoint: path.join(__dirname, "./src/main.ts"),
-  external: ["@minecraft/server", "@minecraft/server-ui"],
-  outfile: path.resolve(__dirname, "./dist/scripts/main.js"),
-  minifyWhitespace: false,
-  sourcemap: true,
-  outputSourcemapPath: path.resolve(__dirname, "./dist/debug"),
-  dropLabels: isProduction ? ["dev"] : undefined,
+const rolldownTask = async () => {
+  const build = await rolldown({
+    input: path.join(__dirname, "./src/main.ts"),
+    external: ["@minecraft/server", "@minecraft/server-ui"],
+  });
+  await build.write({
+    file: path.resolve(__dirname, "./dist/scripts/main.js"),
+    format: "es",
+    sourcemap: true,
+  });
 };
 
 const behaviorPackDirName = getOrThrowFromProcess("BEHAVIOR_PACK_DIR_NAME");
@@ -53,7 +54,7 @@ task("lint", coreLint(["src/**/*.ts"], argv().fix));
 
 // Build
 task("typescript", tscTask());
-task("bundle", bundleTask(bundleTaskOptions));
+task("bundle", rolldownTask);
 task("build", series("typescript", "bundle"));
 
 // Clean
