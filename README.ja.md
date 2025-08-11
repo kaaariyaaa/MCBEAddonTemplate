@@ -1,6 +1,6 @@
 # Minecraft Bedrock Add-On TypeScript テンプレート
 
-このテンプレートは、TypeScript を使用して Minecraft Bedrock アドオンを開発するための基盤を提供します。MCBEWorldEdit プロジェクトで培われたビルドツールを基盤としています。
+このテンプレートは、TypeScript を使用して Minecraft Bedrock アドオンを開発するための基盤を提供します。
 
 ## 特徴
 
