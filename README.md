@@ -2,7 +2,7 @@
 
 # Minecraft Bedrock Add-On TypeScript Template
 
-This template provides a foundation for developing Minecraft Bedrock Add-Ons using TypeScript, based on the build tools from the MCBEWorldEdit project.
+This template provides a foundation for developing Minecraft Bedrock Add-Ons using 
 
 ## Features
 
